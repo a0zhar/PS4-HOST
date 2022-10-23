@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background-color: #333;
+      }
+      #status {
+        top: 50%;
+        padding: 10px;
+        border-radius: 15px;
+        border: 3px groove #333;
+        background-color: #333;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="status">loading</h1>
+    <script>
+      const displayMessage = (m) =>
+        (document.getElementById("status").innerHTML = m);
+
+      function CreateScriptTag(src, id, onload, parent) {
+        let scriptE = document.createElement("script");
+        scriptE.setAttribute("src", src);
+        scriptE.setAttribute("id", id);
+        if (onload != typeof "undefined" && onload != 0)
+          scriptE.addEventListener("load", onload);
+
+        document.getElementsByTagName(parent)[0].appendChild(scriptE);
+        console.log("done");
+      }
+      function setupEXPLOITloader() {
+        displayMessage("Setting Up PL-Loader");
+        CreateScriptTag(
+          "expLoad_setup.js",
+          "expSetup",
+          // once setup file is loaded we load the main file
+          function () {
+            displayMessage("Loading Main PL-Loader...");
+            setTimeout(() => {
+              CreateScriptTag("expLoad_main.js", "expmain", 0, "head");
+              displayMessage("PL-Loader Loaded!, Running Payload");
+            }, 2000);
+          },
+          "head"
+        );
+      }
+    </script>
+    <button onclick="setupEXPLOITloader();">dawdaw</button>
+  </body>
+</html>
