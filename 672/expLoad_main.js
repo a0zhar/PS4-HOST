@@ -21361,23 +21361,4 @@ function load_payload() {
   var _ = malloc_nogc.pop();
   var _ = malloc_nogc.pop();
 }
-var xhr = new XMLHttpRequest();
-xhr.responseType = "arraybuffer";
-xhr.open("GET", PLfile, true);
-xhr.send();
 
-xhr.onreadystatechange = function () {
-  if (xhr.readyState == 4) {
-    var tmp0 = new Uint8Array(xhr.response.byteLength);
-    tmp0.set(new Uint8Array(xhr.response), 0);
-    var payload = new Uint32Array(tmp0);
-    var getlength;
-    for (var i = 0; i < payload.length; i += 1) {
-      getlength="0x" + xhr.response.byteLength.toString(16);
-    }
-    window.pl_blob_len = getlength;
-    window.pl_blob = malloc(window.pl_blob_len);
-    write_mem(window.pl_blob, payload);
-    load_payload();
-  }
-};
