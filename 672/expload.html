@@ -1,58 +1,87 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      body {
-        background-color: #333;
-      }
-      #status {
-        top: 50%;
-        padding: 10px;
-        border-radius: 15px;
-        border: 3px groove #333;
-        background-color: #333;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        position: absolute;
-        color: #fff;
-      }
-    </style>
-    <script src="common/exploit.js"></script>
-    <script src="common/helpers.js"></script>
-    <script src="common/syscalls.js"></script>
-  </head>
-  <body>
-    <h1 id="status">loading</h1>
-    <script>
-      const displayMessage = (m) =>(document.getElementById("status").innerHTML = m);
 
-      function CreateScriptTag(src, id, onload, parent) {
-        let scriptE = document.createElement("script");
-        scriptE.setAttribute("src", src);
-        scriptE.setAttribute("id", id);
-        if (onload != typeof "undefined" && onload != 0)
-          scriptE.addEventListener("load", onload);
+<head>
+  <style>
+    body {
+      background-color: #333;
+    }
 
-        document.getElementsByTagName(parent)[0].appendChild(scriptE);
-        console.log("done");
-      }
-      function setupEXPLOITloader() {
-        displayMessage("Setting Up PL-Loader");
-        CreateScriptTag(
-          "expLoad_setup.js",
-          "expSetup",
-          // once setup file is loaded we load the main file
-          function () {
-            displayMessage("Loading Main PL-Loader...");
-            setTimeout(() => {
-              CreateScriptTag("expLoad_main.js", "expmain", 0, "head");
-              displayMessage("PL-Loader Loaded!, Running Payload");
-            }, 2000);
-          },
-          "head"
-        );
-      }
-    </script>
-    <button onclick="setupEXPLOITloader();">dawdaw</button>
-  </body>
+    #status {
+      top: 50%;
+      padding: 10px;
+      border-radius: 15px;
+      border: 3px groove #333;
+      background-color: #333;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      color: #fff;
+    }
+  </style>
+  <script src="common/exploit.js"></script>
+  <script src="common/helpers.js"></script>
+  <script src="common/syscalls.js"></script>
+  <script src="common/jailbreak.js"></script>
+
+</head>
+
+<body>
+  <h1 id="status">loading</h1>
+  <script>
+    const displayMessage = (m) => (document.getElementById("status").innerHTML = m);
+
+    function CreateScriptTag(src, id, onload, parent) {
+      let scriptE = document.createElement("script");
+      scriptE.setAttribute("src", src);
+      scriptE.setAttribute("id", id);
+      if (onload != typeof "undefined" && onload != 0)
+        scriptE.addEventListener("load", onload);
+      document.getElementsByTagName(parent)[0].appendChild(scriptE);
+      console.log("done");
+    }
+
+    function setupEXPLOITloader() {
+      displayMessage("Setting Up PL-Loader");
+      CreateScriptTag(
+        "expLoad_setup.js",
+        "expSetup",
+        // once setup file is loaded we load the main file
+        function() {
+          displayMessage("Loading Main PL-Loader...");
+          setTimeout(() => {
+            CreateScriptTag("expLoad_main.js", "expmain", 0, "head");
+            displayMessage("PL-Loader Loaded!, Running Payload");
+          }, 2000);
+        },
+        "head"
+      );
+    }
+
+    function load_hen(binfile) {
+      setupEXPLOITloader();
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = "arraybuffer";
+      xhr.open("GET", binfile, true);
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          var tmp0 = new Uint8Array(xhr.response.byteLength);
+          tmp0.set(new Uint8Array(xhr.response), 0);
+          var payload = new Uint32Array(tmp0);
+          var getlength;
+          for (var i = 0; i < payload.length; i += 1) {
+            getlength = "0x" + xhr.response.byteLength.toString(16);
+          }
+          window.pl_blob_len = getlength;
+          window.pl_blob = malloc(window.pl_blob_len);
+          write_mem(window.pl_blob, payload);
+          load_payload();
+        }
+      };
+      setTimeout(jailbreak, 500);
+  </script>
+  <button onclick="setupEXPLOITloader();">dawdaw</button>
+</body>
+
 </html>
