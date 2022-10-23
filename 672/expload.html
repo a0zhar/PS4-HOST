@@ -17,12 +17,14 @@
         color: #fff;
       }
     </style>
+    <script src="common/exploit.js"></script>
+    <script src="common/helpers.js"></script>
+    <script src="common/syscalls.js"></script>
   </head>
   <body>
     <h1 id="status">loading</h1>
     <script>
-      const displayMessage = (m) =>
-        (document.getElementById("status").innerHTML = m);
+      const displayMessage = (m) =>(document.getElementById("status").innerHTML = m);
 
       function CreateScriptTag(src, id, onload, parent) {
         let scriptE = document.createElement("script");
